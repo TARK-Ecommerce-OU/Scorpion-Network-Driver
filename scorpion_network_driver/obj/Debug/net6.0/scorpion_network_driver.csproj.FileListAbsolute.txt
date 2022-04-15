@@ -1,0 +1,12 @@
+/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/obj/Debug/net6.0/scorpion_network_driver.csproj.AssemblyReference.cache
+/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/obj/Debug/net6.0/scorpion_network_driver.GeneratedMSBuildEditorConfig.editorconfig
+/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/obj/Debug/net6.0/scorpion_network_driver.AssemblyInfoInputs.cache
+/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/obj/Debug/net6.0/scorpion_network_driver.AssemblyInfo.cs
+/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/obj/Debug/net6.0/scorpion_network_driver.csproj.CoreCompileInputs.cache
+/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/bin/Debug/net6.0/scorpion_network_driver.deps.json
+/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/bin/Debug/net6.0/scorpion_network_driver.dll
+/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/bin/Debug/net6.0/ref/scorpion_network_driver.dll
+/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/bin/Debug/net6.0/scorpion_network_driver.pdb
+/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/obj/Debug/net6.0/scorpion_network_driver.dll
+/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/obj/Debug/net6.0/ref/scorpion_network_driver.dll
+/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/obj/Debug/net6.0/scorpion_network_driver.pdb
