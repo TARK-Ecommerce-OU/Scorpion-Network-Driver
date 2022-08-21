@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.IO;
+using ScorpionConsoleReadWrite;
 
 namespace ScorpionNetworkDriver
 {
@@ -19,13 +20,13 @@ namespace ScorpionNetworkDriver
         return;
       }
 
-      public async Task<string> get(string DB, string TAG, string SUBTAG, string session)
+      public string get(string DB, string TAG, string SUBTAG, string session)
       {
         string command = null;
         if(SCDT.connect())
         {
-          command = await SCDT.get(nef__.buildQuery(DB, TAG, SUBTAG, session));
-          SCDT.disconnect();
+          command = /*await*/ SCDT.get(nef__.buildQuery(DB, TAG, SUBTAG, session));
+          //SCDT.disconnect();
         }
         try
         {
@@ -57,7 +58,7 @@ namespace ScorpionNetworkDriver
         {
             { "get", "get" },
             { "set", "set" },
-            { "delete" , "delete" }
+            { "delete" , "delete" },
             { "response", "response" }
         };
 
@@ -132,85 +133,93 @@ namespace ScorpionNetworkDriver
       private static int PORT = 0;
       private static string HOST;
 
+      internal static readonly string base_path     = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Scorpion";
+      public static string main_user_aes_path_file  = base_path + "/AES/aes.ky";
+      internal readonly string private_rsa_key      = base_path + "/RSA/client/private-key.pem";
+      internal readonly string public_rsa_key       = base_path + "/RSA/server/public-key.pem";
+
       public ScorpionDriverTCP(string host, int port)
       {
+        //Check if the AES decryption key exists
+        if(!File.Exists(main_user_aes_path_file))
+        {
+          ScorpionConsoleReadWrite.ConsoleWrite.writeError("No AES decryption key found at: ", main_user_aes_path_file, ". Please make sure to create one with the scorpion command 'generateaeskey'. The file will be generated to the correct path if both Scorpion IEE and this program are used on the same server, else import to the new system on ~/Scorpion/AES/aes.ky");
+          Environment.Exit(-1);
+        }
+
         HOST = host;
         PORT = port;
 
+        //Check if the RSA encryption keys exist
+        if(!File.Exists(private_rsa_key) || !File.Exists(public_rsa_key))
+        {
+            ConsoleWrite.writeError("The provided RSA public key: ", public_rsa_key, ", or private key: ", private_rsa_key, " could not be found");
+            return;
+        }
+
         //Static file paths only
-        rSAMin = new ScorpionRSAMin("/etc/scorpion/public.ky", "/etc/scorpion/private.ky");
+        rSAMin = new ScorpionRSAMin(public_rsa_key, public_rsa_key);
         return;
       }
 
-      //Coming up..
-      /*public async Task<bool> post(string input)
+      public string get(string message)
       {
-        
-      }*/
+        //Translate the passed message into UTF8 and store it as a Byte array.
+        Byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
+        NetworkStream stream = scorpion_client.GetStream();
+        // String to store the response in an UTF8 representation.
+        string responseData = String.Empty;
 
-      public async Task<string> get(string message)
-      {
-        return await Task.Run(() => {
-          //Translate the passed message into ASCII and store it as a Byte array.
-          Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
+        //Send the message to the connected TcpServer.
+        //RSA encrypt using the public key
+        data = rSAMin.encrypt(data);
+        stream.Write(data, 0, data.Length);
 
-          //Get a client stream for reading and writing.
-          //Stream stream = client.GetStream();
+        // Buffer to store the response bytes. set ti 'RSA.MAXVALUE'
+        int dat_size = 0;
+        data = new Byte[dat_size];
 
-          NetworkStream stream = scorpion_client.GetStream();
-
-          //Send the message to the connected TcpServer.
-
-          //RSA encrypt using the public key
-          //Console.WriteLine(data[0]);
-          //data = rSAMin.encrypt(data);
-
-          stream.Write(data, 0, data.Length);
-          Console.WriteLine("\n--------SCRSENT---------\n{0}\n---------------------\n", message);
-          //Console.WriteLine(data[0]);
-          // Receive the TcpServer.response.
-
-          // Buffer to store the response bytes.
-          int dat_size = 256;
-          data = new Byte[dat_size];
-
-          // String to store the response ASCII representation.
-          String responseData = String.Empty;
-
-          // Read the first batch of the TcpServer response bytes.
-          //Int32 bytes = stream.Read(data, 0, data.Length);
-
-          //Create temporary byte to store read bytes in
-          int tmpb = 0x00; int n = 0;
-          while((tmpb = stream.ReadByte()) != -1)
+        //Create temporary byte to store read bytes in
+        int tmpb = 0x00; int n = 0;
+        while((tmpb = stream.ReadByte()) != -1)
+        {
+          //Expand array if not long enough
+          if((data.Length) == n)
           {
-            //Expand array if not long enough
-            if((data.Length) == n)
-            {
-              dat_size += 256;
-              Array.Resize<byte>(ref data, dat_size);
-            }
-
-            data[n] = (byte)tmpb;
-
-            //Reset temporary byte
-            tmpb = 0x00;
-
-            //Upone
-            n++;
+            dat_size += 1;
+            Array.Resize<byte>(ref data, dat_size);
           }
+          data[n] = (byte)tmpb;
+          tmpb = 0x00;
+          n++;
+        }
 
-          //Decrypt using the private RSA key
-          //data = rSAMin.decrypt(data);
+        //Decrypt using the private RSA key and get string from bytes
+        using (Aes myAes = Aes.Create())
+        {
+          //Must be a 16 byte key
+          byte[] key = ScorpionAES.ScorpionAESInHouse.importKey(main_user_aes_path_file);
+          try
+          {
+            myAes.Key = key;
+            responseData = ScorpionAES.ScorpionAESInHouse.decrypt(data, myAes.Key, myAes.IV);
+          }
+          catch { Console.WriteLine("Unable to decrypt for: {0}", message); }
+        }
 
-          responseData = System.Text.Encoding.ASCII.GetString(data, 0, /*bytes*/n);
-          Console.WriteLine("\n--------SCRRECV---------\n{0}\n---------------------\n", responseData);
+        if(responseData.Length > 0)
+        {
+          if(!responseData.StartsWith("{&scorpion}{&type}"))
+          {
+            responseData = responseData.Remove(0, responseData.IndexOf("response"));
+            responseData = String.Concat("{&scorpion}{&type}", responseData);
+          }
+        }
 
-          //Close stream.
-          stream.Flush();
-          stream.Close();
-          return responseData;
-        });
+        stream.Flush();
+        stream.Close();
+
+        return responseData;
       }
 
       public bool connect()
@@ -255,37 +264,27 @@ namespace ScorpionNetworkDriver
           Console.WriteLine("No keys found, returning");
           return;
         }
-        private_key_path = private_key_path_;//Cauldron.ExtensionsCryptography.ToSecureString(private_key_path_);
+        private_key_path = private_key_path_;
         public_key_path = public_key_path_;
       }
 
-        private static byte[] read_privatekey_file(ref string path)
-        {
-          return System.Text.Encoding.UTF8.GetBytes(File.ReadAllText(path));
-        }
+      public byte[] decrypt(byte[] data)
+      {
+          //return Rsa.Decrypt(private_key_path, data);
+          using(var rsa = RSAOpenSsl.Create())
+          {
+            rsa.ImportFromPem(File.ReadAllText(private_key_path));
+            return rsa.Decrypt(data, RSAEncryptionPadding.Pkcs1);
+          }
+      }
 
-        private static byte[] read_publickey_file(ref string path)
-        {
-          return System.Text.Encoding.UTF8.GetBytes(File.ReadAllText(path));
-        }
-
-        public byte[] decrypt(byte[] data)
-        {
-            //return Rsa.Decrypt(private_key_path, data);
-            using(var rsa = RSAOpenSsl.Create())
-            {
-              rsa.ImportFromPem(File.ReadAllText(private_key_path));
-              return rsa.Decrypt(data, RSAEncryptionPadding.Pkcs1);
-            }
-        }
-
-        public byte[] encrypt(byte[] data)
-        {
-            using(var rsa = RSAOpenSsl.Create())
-            {
-              rsa.ImportFromPem(File.ReadAllText(public_key_path));
-              return rsa.Encrypt(data, RSAEncryptionPadding.Pkcs1);
-            }
-        }
+      public byte[] encrypt(byte[] data)
+      {
+          using(var rsa = RSAOpenSsl.Create())
+          {
+            rsa.ImportFromPem(File.ReadAllText(public_key_path));
+            return rsa.Encrypt(data, RSAEncryptionPadding.Pkcs1);
+          }
+      }
     }
 }

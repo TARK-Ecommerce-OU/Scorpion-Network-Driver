@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "oH48ExW6iM89UVa9VlLgMy2nr3yHI43lMMLURC4w6LMfRjULj8gZ7FAHpBNIkhry06rT+PJjEhg3j7joTFW+rQ==",
+  "dgSpecHash": "5HS3zkYh19lxzYANi3cqHlC9hsuYVD8W7h6obnKXeV2tVs2HAi4suShj6lFKiHgK8PkaSYfi9taT+ujujCFADg==",
   "success": true,
   "projectFilePath": "/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/scorpion_network_driver.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "/home/ferret/.nuget/packages/easyencrypt/2.2.1/easyencrypt.2.2.1.nupkg.sha512"
+  ],
   "logs": []
 }
