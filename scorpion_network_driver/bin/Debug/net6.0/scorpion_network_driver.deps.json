@@ -8,7 +8,8 @@
     ".NETCoreApp,Version=v6.0": {
       "scorpion_network_driver/1.0.0": {
         "dependencies": {
-          "Scorpion_Aes": "1.0.0",
+          "Scorpion-Default-Paths": "1.0.0",
+          "Squirrel-AES": "1.0.0",
           "consolereadwrite": "1.0.0"
         },
         "runtime": {
@@ -28,12 +29,17 @@
           "consolereadwrite.dll": {}
         }
       },
-      "Scorpion_Aes/1.0.0": {
+      "Scorpion-Default-Paths/1.0.0": {
+        "runtime": {
+          "Scorpion-Default-Paths.dll": {}
+        }
+      },
+      "Squirrel-AES/1.0.0": {
         "dependencies": {
           "EasyEncrypt": "2.2.1"
         },
         "runtime": {
-          "Scorpion_Aes.dll": {}
+          "Squirrel-AES.dll": {}
         }
       }
     }
@@ -56,7 +62,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Scorpion_Aes/1.0.0": {
+    "Scorpion-Default-Paths/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Squirrel-AES/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

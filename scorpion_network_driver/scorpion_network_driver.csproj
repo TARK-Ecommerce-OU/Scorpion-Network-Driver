@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Scorpion-AES\Scorpion_Aes.csproj" />
-    <ProjectReference Include="..\..\Scorpion-Console-Read-Write\consolereadwrite.csproj" />
+    <ProjectReference Include="..\..\Squirrel_Project\Squirrel-AES\Squirrel-AES.csproj" />
+    <ProjectReference Include="..\..\Squirrel_Project\Squirrel-Console-Read-Write\consolereadwrite.csproj" />
+    <ProjectReference Include="..\..\Squirrel_Project\Squirrel-Default-Paths\Scorpion-Default-Paths.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

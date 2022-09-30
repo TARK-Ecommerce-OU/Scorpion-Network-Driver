@@ -1,7 +1,7 @@
-using System.Text;
+/*using System.Text;
 
 namespace Scorpion.Crypto
-{    public partial class Cryptographer
+{    public partial class CryptographerMin
     {
         public string To_String(byte[] byt)
         {
@@ -21,4 +21,4 @@ namespace Scorpion.Crypto
             return System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(to_decode));
         }
     }
-}
+}*/

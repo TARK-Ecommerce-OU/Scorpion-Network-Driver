@@ -4,14 +4,77 @@
     "/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/scorpion_network_driver.csproj": {}
   },
   "projects": {
-    "/home/ferret/GIT/Scorpion-AES/Scorpion_Aes.csproj": {
+    "/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/scorpion_network_driver.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/ferret/GIT/Scorpion-AES/Scorpion_Aes.csproj",
-        "projectName": "Scorpion_Aes",
-        "projectPath": "/home/ferret/GIT/Scorpion-AES/Scorpion_Aes.csproj",
+        "projectUniqueName": "/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/scorpion_network_driver.csproj",
+        "projectName": "scorpion_network_driver",
+        "projectPath": "/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/scorpion_network_driver.csproj",
         "packagesPath": "/home/ferret/.nuget/packages/",
-        "outputPath": "/home/ferret/GIT/Scorpion-AES/obj/",
+        "outputPath": "/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/ferret/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "/home/ferret/GIT/Squirrel_Project/Squirrel-AES/Squirrel-AES.csproj": {
+                "projectPath": "/home/ferret/GIT/Squirrel_Project/Squirrel-AES/Squirrel-AES.csproj"
+              },
+              "/home/ferret/GIT/Squirrel_Project/Squirrel-Console-Read-Write/consolereadwrite.csproj": {
+                "projectPath": "/home/ferret/GIT/Squirrel_Project/Squirrel-Console-Read-Write/consolereadwrite.csproj"
+              },
+              "/home/ferret/GIT/Squirrel_Project/Squirrel-Default-Paths/Scorpion-Default-Paths.csproj": {
+                "projectPath": "/home/ferret/GIT/Squirrel_Project/Squirrel-Default-Paths/Scorpion-Default-Paths.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/home/ferret/.dotnet/sdk/6.0.400/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/ferret/GIT/Squirrel_Project/Squirrel-AES/Squirrel-AES.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/ferret/GIT/Squirrel_Project/Squirrel-AES/Squirrel-AES.csproj",
+        "projectName": "Squirrel-AES",
+        "projectPath": "/home/ferret/GIT/Squirrel_Project/Squirrel-AES/Squirrel-AES.csproj",
+        "packagesPath": "/home/ferret/.nuget/packages/",
+        "outputPath": "/home/ferret/GIT/Squirrel_Project/Squirrel-AES/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/ferret/.nuget/NuGet/NuGet.Config"
@@ -49,7 +112,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -58,18 +122,18 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/6.0.100/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/home/ferret/.dotnet/sdk/6.0.400/RuntimeIdentifierGraph.json"
         }
       }
     },
-    "/home/ferret/GIT/Scorpion-Console-Read-Write/consolereadwrite.csproj": {
+    "/home/ferret/GIT/Squirrel_Project/Squirrel-Console-Read-Write/consolereadwrite.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/ferret/GIT/Scorpion-Console-Read-Write/consolereadwrite.csproj",
+        "projectUniqueName": "/home/ferret/GIT/Squirrel_Project/Squirrel-Console-Read-Write/consolereadwrite.csproj",
         "projectName": "consolereadwrite",
-        "projectPath": "/home/ferret/GIT/Scorpion-Console-Read-Write/consolereadwrite.csproj",
+        "projectPath": "/home/ferret/GIT/Squirrel_Project/Squirrel-Console-Read-Write/consolereadwrite.csproj",
         "packagesPath": "/home/ferret/.nuget/packages/",
-        "outputPath": "/home/ferret/GIT/Scorpion-Console-Read-Write/obj/",
+        "outputPath": "/home/ferret/GIT/Squirrel_Project/Squirrel-Console-Read-Write/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/ferret/.nuget/NuGet/NuGet.Config"
@@ -101,7 +165,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -110,18 +175,18 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/6.0.100/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/home/ferret/.dotnet/sdk/6.0.400/RuntimeIdentifierGraph.json"
         }
       }
     },
-    "/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/scorpion_network_driver.csproj": {
+    "/home/ferret/GIT/Squirrel_Project/Squirrel-Default-Paths/Scorpion-Default-Paths.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/scorpion_network_driver.csproj",
-        "projectName": "scorpion_network_driver",
-        "projectPath": "/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/scorpion_network_driver.csproj",
+        "projectUniqueName": "/home/ferret/GIT/Squirrel_Project/Squirrel-Default-Paths/Scorpion-Default-Paths.csproj",
+        "projectName": "Scorpion-Default-Paths",
+        "projectPath": "/home/ferret/GIT/Squirrel_Project/Squirrel-Default-Paths/Scorpion-Default-Paths.csproj",
         "packagesPath": "/home/ferret/.nuget/packages/",
-        "outputPath": "/home/ferret/GIT/Scorpion-Network-Driver/scorpion_network_driver/obj/",
+        "outputPath": "/home/ferret/GIT/Squirrel_Project/Squirrel-Default-Paths/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/ferret/.nuget/NuGet/NuGet.Config"
@@ -135,14 +200,7 @@
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
-            "projectReferences": {
-              "/home/ferret/GIT/Scorpion-AES/Scorpion_Aes.csproj": {
-                "projectPath": "/home/ferret/GIT/Scorpion-AES/Scorpion_Aes.csproj"
-              },
-              "/home/ferret/GIT/Scorpion-Console-Read-Write/consolereadwrite.csproj": {
-                "projectPath": "/home/ferret/GIT/Scorpion-Console-Read-Write/consolereadwrite.csproj"
-              }
-            }
+            "projectReferences": {}
           }
         },
         "warningProperties": {
@@ -160,7 +218,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -169,7 +228,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/6.0.100/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/home/ferret/.dotnet/sdk/6.0.400/RuntimeIdentifierGraph.json"
         }
       }
     }
