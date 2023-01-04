@@ -183,7 +183,6 @@ namespace ScorpionNetworkDriver
         // String to store the response in an UTF8 representation.
         string responseData = String.Empty;
 
-
         //DEBUG!!!!
         Console.WriteLine("DATA {0} : ", message);
 
