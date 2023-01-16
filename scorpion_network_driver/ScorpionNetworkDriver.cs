@@ -25,17 +25,36 @@ namespace ScorpionNetworkDriver
 
       public string get(string DB, string TAG, string SUBTAG, string session, bool is_css, bool is_script)
       {
-        string command = null;
+        string response = null;
+        string query = string.Empty;
+
         if(SCDT.connect())
         {
-          command = /*await*/ SCDT.get(NetworkEngineFunctions.buildQuery(DB, TAG, SUBTAG, session, (is_css == true || is_script == true ? false : true)));
-          //SCDT.disconnect();
+          query = NetworkEngineFunctions.buildQuery(DB, TAG, SUBTAG, session, (is_css == true || is_script == true ? NetworkEngineFunctions.types["false"] : NetworkEngineFunctions.types["true"]));
+          ConsoleWrite.writeDebug("SENDING GET QUERY: ", query);
+          response = SCDT.get(query);//NetworkEngineFunctions.buildQuery(DB, TAG, SUBTAG, session, (is_css == true || is_script == true ? false : true)));
         }
         try
         {
-          //Console.WriteLine("Returning: {0}", command);
-          //Console.WriteLine("\n--------DATA---------\nReturning DATA: {0}---------------------\n", nef__.replaceApiResponse(command)["data"]);
-          return NetworkEngineFunctions.replaceApiResponse(command)["data"];
+          return NetworkEngineFunctions.replaceApiResponse(response)["data"];
+        }
+        catch{ return null; }
+      }
+
+      public string set(string DB, string TAG, string SUBTAG, string DATA, string session)
+      {
+        string response = null;
+        string query = string.Empty;
+
+        if(SCDT.connect())
+        {
+          query = NetworkEngineFunctions.buildData(DB, TAG, SUBTAG, session, DATA);
+          ConsoleWrite.writeDebug("SENDING SET QUERY: ", query);
+          response = SCDT.set(query);
+        }
+        try
+        {
+          return NetworkEngineFunctions.replaceApiResponse(response)["data"];
         }
         catch{ return null; }
       }
@@ -65,17 +84,34 @@ namespace ScorpionNetworkDriver
 
         public static readonly Dictionary<string, string> api_requests = new Dictionary<string, string>
         {
-            { "get", "get" },
-            { "set", "set" },
-            { "delete" , "delete" },
-            { "response", "response" }
+          { "get", "get" },
+          { "set", "set" },
+          { "delete" , "delete" },
+          { "response", "response" }
         };
 
         private static readonly Dictionary<string, string> api_result = new Dictionary<string, string>
         {
-            { "ok", "ok" },
-            { "error", "error" }
+          { "ok", "ok" },
+          { "error", "error" }
         };
+
+        public static readonly Dictionary<string, string> types = new Dictionary<string, string>
+        {
+          { "none", "none" },
+          { "true", "true" },
+          { "false", "false" },
+        };
+
+        public static string cleanTagsFromDataString(string data)
+        {
+          foreach(KeyValuePair<string, string[]> tags in api)
+          {
+            data = data.Replace(tags.Value[0], string.Empty);
+            data = data.Replace(tags.Value[1], string.Empty);
+          }
+          return data;
+        }
 
         public static Dictionary<string, string> replaceApi(string Scorp_Line)
         {
@@ -84,14 +120,23 @@ namespace ScorpionNetworkDriver
             {
                 //Split other elements
                 //Get the app
-                string[] db, tag, subtag, type, session, includedata;
+                string[] db, tag, subtag, type, session, includedata, data;
                 type = Scorp_Line.Split(api["type"], StringSplitOptions.RemoveEmptyEntries);
                 db = Scorp_Line.Split(api["database"], StringSplitOptions.RemoveEmptyEntries);
                 tag = Scorp_Line.Split(api["tag"], StringSplitOptions.RemoveEmptyEntries);
+                data = Scorp_Line.Split(api["data"], StringSplitOptions.RemoveEmptyEntries);
                 subtag = Scorp_Line.Split(api["subtag"], StringSplitOptions.RemoveEmptyEntries);
                 session = Scorp_Line.Split(api["session"], StringSplitOptions.RemoveEmptyEntries);
                 includedata = Scorp_Line.Split(api["includedata"], StringSplitOptions.RemoveEmptyEntries);
-                return new Dictionary<string, string> { { "type", type[1] }, { "db", db[1] }, { "tag", tag[1] }, { "subtag", subtag[1] }, { "session", session[1] }, { "includedata", includedata.Length > 0 ? includedata[1] : null}, };
+                return new Dictionary<string, string> { 
+                  { "type", type[1] },
+                  { "db", db[1] },
+                  { "tag", tag[1] },
+                  { "subtag", (subtag.Length > 0 ? subtag[1] : types["none"]) },
+                  { "session", session[1] },
+                  { "includedata", (includedata.Length > 0 ? includedata[1] : null) },
+                  { "data", data[1] },
+                };
             }
             return null;
         }
@@ -107,7 +152,12 @@ namespace ScorpionNetworkDriver
             status = Scorp_Line.Split(api["status"], StringSplitOptions.RemoveEmptyEntries);
             session = Scorp_Line.Split(api["session"], StringSplitOptions.RemoveEmptyEntries);
             includedata = Scorp_Line.Split(api["includedata"], StringSplitOptions.RemoveEmptyEntries);
-            return new Dictionary<string, string> { { "type", type[1] }, { "data", data[1] }, { "status", status[1] }, { "session", session[1] }, };
+            return new Dictionary<string, string> {
+              { "type", type[1] },
+              { "data", data[1] },
+              { "status", status[1] },
+              { "session", session[1] },
+            };
           }
           return null;
         }
@@ -120,9 +170,14 @@ namespace ScorpionNetworkDriver
         }
 
         //Builds a query for a network request
-        public static string buildQuery(string DB, string TAG, string SUBTAG, string session, bool include_data)
+        public static string buildQuery(string DB, string TAG, string SUBTAG, string session, string include_data)
         {
-            return api["scorpion"][0] + api["type"][0] + api_requests["get"] + api["type"][1] + api["database"][0] + DB + api["database"][1] + api["tag"][0] + TAG + api["tag"][1] + api["subtag"][0] + SUBTAG + api["subtag"][1] + api["session"][0] + session + api["session"][1] + api["scorpion"][1] + api["includedata"][0] + include_data.ToString() + api["includedata"][1] + api["scorpion"][1];
+            return api["scorpion"][0] + api["type"][0] + api_requests["get"] + api["type"][1] + api["database"][0] + DB + api["database"][1] + api["tag"][0] + TAG + api["tag"][1] + api["subtag"][0] + SUBTAG + api["subtag"][1] + api["session"][0] + session + api["session"][1] + api["scorpion"][1] + api["includedata"][0] + include_data + api["includedata"][1] + api["data"][0] + types["none"] + api["data"][1] + api["scorpion"][1];
+        }
+
+        public static string buildData(string DB, string TAG, string SUBTAG, string session, string data)
+        {
+            return api["scorpion"][0] + api["type"][0] + api_requests["set"] + api["type"][1] + api["database"][0] + DB + api["database"][1] + api["tag"][0] + TAG + api["tag"][1] + api["subtag"][0] + SUBTAG + api["subtag"][1] + api["session"][0] + session + api["session"][1] + api["scorpion"][1] + api["data"][0] + data + api["data"][1] + api["includedata"][0] + types["false"] + api["includedata"][1] + api["scorpion"][1];
         }
 
         public static string replaceTelnet(string Scorp_Line)
@@ -146,7 +201,7 @@ namespace ScorpionNetworkDriver
       private static int PORT = 0;
       private static string HOST;
 
-      internal static readonly string base_path     = SquirrelDefaultPaths.SquirrelPaths.main_user_path; //Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Scorpion";
+      internal static readonly string base_path     = SquirrelDefaultPaths.SquirrelPaths.main_user_path;
       public static string main_user_aes_path_file  = SquirrelDefaultPaths.SquirrelPaths.main_user_aes_path_file;
       internal readonly string private_rsa_key      = SquirrelDefaultPaths.SquirrelPaths.main_user_rsa_path + "/client/private-key.pem";
       internal readonly string public_rsa_key       = SquirrelDefaultPaths.SquirrelPaths.main_user_rsa_path + "/server/public-key.pem";
@@ -175,11 +230,22 @@ namespace ScorpionNetworkDriver
         return;
       }
 
-      public string get(string message)
+      public string get(string data)
+      {
+        return request(data);
+      }
+
+      public string set(string data)
+      {
+        return request(data);
+      }
+
+      private string request(string message)
       {
         //Translate the passed message into UTF8 and store it as a Byte array.
         Byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
         NetworkStream stream = scorpion_client.GetStream();
+
         // String to store the response in an UTF8 representation.
         string responseData = String.Empty;
 
