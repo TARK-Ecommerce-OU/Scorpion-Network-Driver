@@ -3,7 +3,6 @@ using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.IO;
-using ScorpionConsoleReadWrite;
 
 namespace ScorpionNetworkDriver
 {
@@ -31,8 +30,8 @@ namespace ScorpionNetworkDriver
         if(SCDT.connect())
         {
           query = NetworkEngineFunctions.buildQuery(DB, TAG, SUBTAG, session, (is_css == true || is_script == true ? NetworkEngineFunctions.types["false"] : NetworkEngineFunctions.types["true"]));
-          ConsoleWrite.writeDebug("SENDING GET QUERY: ", query);
-          response = SCDT.get(query);//NetworkEngineFunctions.buildQuery(DB, TAG, SUBTAG, session, (is_css == true || is_script == true ? false : true)));
+          //ConsoleWrite.writeDebug("SENDING GET QUERY: ", query);
+          response = SCDT.get(query);
         }
         try
         {
@@ -49,7 +48,7 @@ namespace ScorpionNetworkDriver
         if(SCDT.connect())
         {
           query = NetworkEngineFunctions.buildData(DB, TAG, SUBTAG, session, DATA);
-          ConsoleWrite.writeDebug("SENDING SET QUERY: ", query);
+          //ConsoleWrite.writeDebug("SENDING SET QUERY: ", query);
           response = SCDT.set(query);
         }
         try
@@ -80,6 +79,8 @@ namespace ScorpionNetworkDriver
             { "status", new string[] {"{&status}", "{&/status}" } },
             { "session", new string[] {"{&session}", "{&/session}" } },
             { "includedata", new string[] {"{&includedata}", "{&/includedata}" } },
+            { "user", new string[] {"{&user}", "{&/user}" } },
+            { "password", new string[] {"{&password}", "{&/password}" } },
         };
 
         public static readonly Dictionary<string, string> api_requests = new Dictionary<string, string>
@@ -87,7 +88,8 @@ namespace ScorpionNetworkDriver
           { "get", "get" },
           { "set", "set" },
           { "delete" , "delete" },
-          { "response", "response" }
+          { "response", "response" },
+          { "login", "login" }
         };
 
         private static readonly Dictionary<string, string> api_result = new Dictionary<string, string>
@@ -218,15 +220,6 @@ namespace ScorpionNetworkDriver
         HOST = host;
         PORT = port;
 
-        //Check if the RSA encryption keys exist
-        if(!File.Exists(private_rsa_key) || !File.Exists(public_rsa_key))
-        {
-            ConsoleWrite.writeError("The provided RSA public key: ", public_rsa_key, ", or private key: ", private_rsa_key, " could not be found");
-            return;
-        }
-
-        //Static file paths only
-        rSAMin = new ScorpionRSAMin(public_rsa_key, public_rsa_key);
         return;
       }
 
@@ -250,11 +243,22 @@ namespace ScorpionNetworkDriver
         string responseData = String.Empty;
 
         //DEBUG!!!!
-        Console.WriteLine("DATA {0} : ", message);
+        //Console.WriteLine("DATA {0} : ", message);
 
         //Send the message to the connected TcpServer.
-        //RSA encrypt using the public key
-        data = rSAMin.encrypt(data);
+        //Switching to AES due to length limitations and performance
+        message = "0000000000000000000" + message;
+        using (Aes myAes = Aes.Create())
+        {
+          //Must be a 16 byte key
+          byte[] key = ScorpionAES.ScorpionAESInHouse.importKey(main_user_aes_path_file);
+          try
+          {
+            myAes.Key = key;
+            data = ScorpionAES.ScorpionAESInHouse.encrypt(message, myAes.Key, myAes.IV);
+          }
+          catch { Console.WriteLine("Unable to decrypt for: {0}", message); }
+        }
         stream.Write(data, 0, data.Length);
 
         // Buffer to store the response bytes. set ti 'RSA.MAXVALUE'
